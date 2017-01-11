@@ -182,6 +182,8 @@ export function OAuthComponent(Component) {
                 let auth_info = react_cookie.load('redux_oauth2');
                 if (this.props.oauth.user === null && auth_info && auth_info.access_token) {
                     this.props.oauth_actions.sync_user(auth_info.access_token);
+                }else if(auth_info && auth_info.access_token) {
+                    this.props.oauth_actions.load_token(auth_info)
                 }
             }
 
