@@ -61,12 +61,6 @@ export const actions = {
             type: 'OAUTH_START',
         }
     },
-    load_user(user){
-        return {
-            type: 'OAUTH_LOAD_USER',
-            payload: user,
-        }
-    },
     load_user(user, token){
         return {
             type: 'OAUTH_LOAD_USER',
@@ -110,7 +104,7 @@ export const actions = {
         react_cookie.save('redux_oauth2', JSON.stringify(token), {path: '/'});
         return {
             type: 'OAUTH_SAVE_TOKEN',
-            payload: token
+            payload: token.access_token
         }
     },
     signout(){
