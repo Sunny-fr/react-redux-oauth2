@@ -67,10 +67,10 @@ export const actions = {
             payload: user,
         }
     },
-    load_user(user){
+    load_user(user, token){
         return {
             type: 'OAUTH_LOAD_USER',
-            payload: user,
+            payload: {user, token},
         }
     },
     load_token(token){
@@ -139,7 +139,7 @@ export const actions = {
     sync_user(token, cb){
         return dispatch => {
             fetch_user(token).then(res => {
-                dispatch(actions.load_user(res.data))
+                dispatch(actions.load_user(res.data, token))
                 cb(res.data);
             }).catch(actions.error)
         }
@@ -158,7 +158,7 @@ export const reducer = {
                 return {authenticating: false, user: null, error: actions.payload}
                 break;
             case 'OAUTH_LOAD_USER':
-                return {authenticating: false, user: actions.payload, error: null}
+                return {authenticating: false, user: actions.payload.user, token: actions.payload.token, error: null}
                 break;
             case 'OAUTH_LOAD_TOKEN':
                 return {authenticating: false, user: '', token: actions.payload.token,  error: null}
