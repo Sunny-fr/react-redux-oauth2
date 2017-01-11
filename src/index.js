@@ -148,26 +148,28 @@ export const actions = {
 
 export const reducer = {
     oauth(state = {authenticating: false, user: null, error: null, token: null}, actions){
+
+
         switch (actions.type) {
             case 'OAUTH_START':
-                return {authenticating: true, user: null, error: null}
+                return {...state, authenticating: true, user: null, error: null}
                 break;
             case 'OAUTH_CANCELED':
-                return {authenticating: false, user: null, error: 'user canceled'}
+                return {...state, authenticating: false, user: null, error: 'user canceled'}
             case 'OAUTH_ERROR':
-                return {authenticating: false, user: null, error: actions.payload}
+                return {...state, authenticating: false, user: null, error: actions.payload}
                 break;
             case 'OAUTH_LOAD_USER':
-                return {authenticating: false, user: actions.payload.user, token: actions.payload.token, error: null}
+                return {...state, authenticating: false, user: actions.payload.user, token: actions.payload.token, error: null}
                 break;
             case 'OAUTH_LOAD_TOKEN':
-                return {authenticating: false, user: '', token: actions.payload.token,  error: null}
+                return {...state, authenticating: false, user: '', token: actions.payload.token,  error: null}
                 break;
             case 'OAUTH_SAVE_TOKEN':
-                return {authenticating: false, user: '', token: actions.payload,  error: null}
+                return {...state, authenticating: false, user: '', token: actions.payload,  error: null}
                 break;
             case 'OAUTH_SIGNOUT':
-                return {authenticating: false, user: null, error: null}
+                return {...state, authenticating: false, user: null, error: null}
                 break;
             default:
                 return state;
