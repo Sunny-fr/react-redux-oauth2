@@ -117,16 +117,20 @@ export const actions = {
         return dispatch => {
             try {
                 let token = react_cookie.load('redux_oauth2');
-                axios.delete(`${config.url}${config.token}`, {
-                    headers: {
-                        'Authorization': `Bearer ${token.access_token}`
-                    }
-                }).then(res => {
-                    react_cookie.remove('redux_oauth2');
-                    dispatch({
-                        type: 'OAUTH_SIGNOUT'
-                    })
-                }).catch(e => dispatch(actions.error(e)));
+                react_cookie.remove('redux_oauth2');
+                dispatch({
+                    type: 'OAUTH_SIGNOUT'
+                })
+                // axios.delete(`${config.url}${config.token}`, {
+                //     headers: {
+                //         'Authorization': `Bearer ${token.access_token}`
+                //     }
+                // }).then(res => {
+                //     react_cookie.remove('redux_oauth2');
+                //     dispatch({
+                //         type: 'OAUTH_SIGNOUT'
+                //     })
+                // }).catch(e => dispatch(actions.error(e)));
             } catch (e) {
                 dispatch(actions.error(e))
             }
