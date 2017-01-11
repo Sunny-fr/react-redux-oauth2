@@ -163,10 +163,10 @@ export const reducer = {
                 return {...state, authenticating: false, user: actions.payload.user, token: actions.payload.token, error: null}
                 break;
             case 'OAUTH_LOAD_TOKEN':
-                return {...state, authenticating: false, user: '', token: actions.payload.token,  error: null}
+                return {...state, authenticating: false, token: actions.payload.token,  error: null}
                 break;
             case 'OAUTH_SAVE_TOKEN':
-                return {...state, authenticating: false, user: '', token: actions.payload,  error: null}
+                return {...state, authenticating: false, token: actions.payload,  error: null}
                 break;
             case 'OAUTH_SIGNOUT':
                 return {...state, authenticating: false, user: null, error: null}
