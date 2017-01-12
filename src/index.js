@@ -8,6 +8,7 @@ import node_cookie from 'cookie'
 import _ from 'lodash'
 
 const config = {
+    clientID: null,
     url: 'http://localhost',
     token: '/oauth/token',
     client_id: null,
@@ -21,8 +22,8 @@ export default function (_config) {
     Object.assign(config, _config);
 }
 
-function fetch_user(token) {
-    return axios.get(`${config.url}${config.token}`, {
+function fetch_token(token) {
+    return axios.get(`${config.url}${config.token}?client=${config.clientID}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -34,10 +35,9 @@ export function storeInitialize(cookies, store, options) {
         try {
             cookies = node_cookie.parse(cookies);
             let redux_oauth2 = JSON.parse(decodeURIComponent(cookies.redux_oauth2));
-
             store.dispatch(actions.load_token(redux_oauth2))
 
-            //fetch_user(redux_oauth2.access_token).then(res => resolve(store.dispatch(actions.load_user(res.data)))).catch(reject);
+            //fetch_token(redux_oauth2.access_token).then(res => resolve(store.dispatch(actions.load_user(res.data)))).catch(reject);
         } catch (e) {
             reject(e);
         }
@@ -73,24 +73,24 @@ export const actions = {
             payload: {token},
         }
     },
-    get_token(creds, cb){
-        return dispatch => {
-            dispatch(actions.start());
-            axios.post(`${config.url}${config.token}`, Object.assign({
-                client_id: config.client_id,
-                client_secret: config.client_secret,
-                grant_type: "password",
-                scope: "all",
-            }, creds)).then(res => {
-                dispatch(actions.complete(res.data, () => {
-                    cb(null, res.data);
-                }));
-            }).catch(e => {
-                cb(e);
-                dispatch(actions.error(e))
-            });
-        }
-    },
+    // get_token(creds, cb){
+    //     return dispatch => {
+    //         dispatch(actions.start());
+    //         axios.post(`${config.url}${config.token}`, Object.assign({
+    //             client_id: config.client_id,
+    //             client_secret: config.client_secret,
+    //             grant_type: "password",
+    //             scope: "all",
+    //         }, creds)).then(res => {
+    //             dispatch(actions.complete(res.data, () => {
+    //                 cb(null, res.data);
+    //             }));
+    //         }).catch(e => {
+    //             cb(e);
+    //             dispatch(actions.error(e))
+    //         });
+    //     }
+    // },
     complete(token, cb){
         return dispatch => {
             // save token
@@ -110,11 +110,9 @@ export const actions = {
     signout(){
         return dispatch => {
             try {
-                let token = react_cookie.load('redux_oauth2');
+                //let token = react_cookie.load('redux_oauth2');
                 react_cookie.remove('redux_oauth2');
-                dispatch({
-                    type: 'OAUTH_SIGNOUT'
-                })
+                dispatch({ type: 'OAUTH_SIGNOUT' })
                 // axios.delete(`${config.url}${config.token}`, {
                 //     headers: {
                 //         'Authorization': `Bearer ${token.access_token}`
@@ -132,7 +130,7 @@ export const actions = {
     },
     sync_user(token, cb){
         return dispatch => {
-            fetch_user(token).then(res => {
+            fetch_token(token).then(res => {
                 dispatch(actions.load_user(res.data, token))
                 cb(res.data);
             }).catch(actions.error)
@@ -163,7 +161,7 @@ export const reducer = {
                 return {...state, authenticating: false, token: actions.payload,  error: null}
                 break;
             case 'OAUTH_SIGNOUT':
-                return {...state, authenticating: false, user: null, token:null, error: null}
+                return {...state, authenticating: false, user: null, token: null, error: null}
                 break;
             default:
                 return state;
@@ -231,7 +229,7 @@ export function OAuthSignin(Button) {
             }
 
             handleClick(e, provider) {
-                let url = `${config.url}${config.providers[provider]}`;
+                let url = `${config.url}${config.providers[provider]}?client=${config.clientID}`;
                 let name = 'connecting to ' + provider;
                 let settings = 'scrollbars=no,toolbar=no,location=no,titlebar=no,directories=no,status=no,menubar=no,top=100,left=100,width=600,height=500';
                 this.props.actions.start();
