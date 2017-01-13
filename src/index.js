@@ -101,7 +101,9 @@ export const actions = {
         }
     },
     save_token(token){
-        react_cookie.save('redux_oauth2', JSON.stringify(token), {path: '/'});
+        const exp = new Date()
+        exp.setMonth(exp.getMonth()+1)
+        react_cookie.save('redux_oauth2', JSON.stringify(token), { path: '/', expires: exp });
         return {
             type: 'OAUTH_SAVE_TOKEN',
             payload: token.access_token
